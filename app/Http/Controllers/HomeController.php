@@ -17,5 +17,10 @@ class HomeController extends Controller
         return view('home.index', ['users'=> $users]);
     }
 
-   
+    public function detail($user_id): View
+    {
+
+        $user = DB::table('users')->where('id', $user_id)->first();
+        return view('home.detail', ['user'=> $user]);
+    }
 }
