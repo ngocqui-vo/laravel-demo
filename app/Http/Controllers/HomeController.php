@@ -51,4 +51,10 @@ class HomeController extends Controller
 
         return redirect('/')->with('success', "Account updated.");
     }
+    public function delete($user_id): RedirectResponse
+    {
+        $user = User::all()->where('id', $user_id)->first();
+        $user->delete();
+        return redirect('/')->with('success', "Account deleted.");
+    }
 }
