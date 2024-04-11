@@ -23,4 +23,32 @@ class HomeController extends Controller
         $user = DB::table('users')->where('id', $user_id)->first();
         return view('home.detail', ['user'=> $user]);
     }
+    public function edit($user_id): View
+    {
+        $user = DB::table('users')->where('id', $user_id)->first();
+        return view('home.edit', ['user'=>$user]);
+    }
+    public function edited(Request $request, $user_id): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,gif|max:2048'
+        ]);
+
+        $user = User::all()->where('id', $user_id)->first();
+        if ($request->name) {
+            $user->name = $request->name;
+        }
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+        }
+//        $user->setPasswordAttribute($request->password);
+        if ($request->password) {
+            $user->update(['password'=>$request->password]);
+        }
+        $user->save();
+
+        return redirect('/')->with('success', "Account updated.");
+    }
 }
